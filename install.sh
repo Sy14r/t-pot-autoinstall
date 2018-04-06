@@ -75,6 +75,10 @@ if [ "$#" -ne 3 -a  "$#" -gt 0 ]; then
 	echo "#     Standard Honeypots, Suricata & ELK, and support    #"
 	echo "#     for remote sensors                                 #"
 	echo "#                                                        #"
+	echo "# 6 - T-Pot's HONEYPOTS ONLY  W/LUMBERJACK               #"
+	echo "#     Honeypots only, w/o Suricata & ELK,                #"
+	echo "#     w/push to central elk                              #"
+	echo "#                                                        #"
 	echo "##########################################################"
 	echo ""
     echo "## EXITING"
@@ -206,6 +210,10 @@ if [ -z ${noninteractive+x} ]; then
 	echo "#     Standard Honeypots, Suricata & ELK, and support    #"
 	echo "#     for remote sensors                                 #"
 	echo "#                                                        #"
+	echo "# 6 - T-Pot's HONEYPOTS ONLY  W/LUMBERJACK               #"
+	echo "#     Honeypots only, w/o Suricata & ELK,                #"
+	echo "#     w/push to central elk                              #"
+	echo "#                                                        #"
 	echo "##########################################################"
 	echo ""
 	echo -n "Your choice: "
@@ -215,9 +223,9 @@ else
 fi
 
 
-if [[ "$choice" != [1-5] ]];
+if [[ "$choice" != [1-6] ]];
 	then
-		fuECHO "### You typed $choice, which I don't recognize. It's either '1', '2', '3', '4' or '5'. Script will abort!"
+		fuECHO "### You typed $choice, which I don't recognize. It's either '1', '2', '3', '4', '5' or '6'. Script will abort!"
 		exit 1
 fi
 case $choice in
@@ -241,7 +249,10 @@ case $choice in
 	echo "You chose to install T-Pot's Standard w/Sensor support. The future is now."
 	mode="TPOT-SENSOR-SERVER"
 	;;
-
+6)
+	echo "You chose to install T-Pot's Honeypots w/remote logging to central server. Honey all teh potz."
+	mode="TPOT-SENSOR-CLIENT"
+	;;
 *)
 	fuECHO "### You typed $choice, which I don't recognize. It's either '1', '2', '3' or '4'. Script will abort!"
 	exit 1
@@ -384,6 +395,20 @@ case $mode in
 	echo "### Generating Key/Cert pair for lumberjack encryption."
 	mkdir -p /opt/tpot/etc/certs
 	openssl req -x509 -batch -nodes -newkey rsa:2048 -days 365 -keyout "/opt/tpot/etc/certs/lumberjack.key" -out "/opt/tpot/etc/certs/lumberjack.crt"
+  ;;
+  TPOT-SENSOR-CLIENT)
+    echo "### Preparing TPOT flavor installation."
+    cp /opt/tpot/etc/compose/tpot-sensor.yml $myTPOTCOMPOSE
+	echo "### Checking for lumberjack cert."
+	echo -n "Enter server ip to log to: "
+	read CENTRAL_IP
+	echo "### Will send logs to $CENTRAL_IP"
+	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"
+	echo $myTPOTCOMPOSE
+	exit
+	mkdir -p /opt/tpot/etc/certs
+	# this is where we could prompt for server and then wget the cert and simplify installation
+	cp ./lumberjack.crt /opt/tpot/etc/certs/
   ;;
   ALL)
     echo "### Preparing EVERYTHING flavor installation."
