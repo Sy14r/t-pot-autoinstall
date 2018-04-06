@@ -11,7 +11,7 @@ During setup, you can choose from four different configurations: T-Pot's standar
 
 So, clone the repository. Run as root. Enjoy.
 
-    git clone https://github.com/dtag-dev-sec/t-pot-autoinstall.git
+    git clone https://github.com/Sy14r/t-pot-autoinstall.git
     cd t-pot-autoinstall/
     sudo su
     ./install.sh
