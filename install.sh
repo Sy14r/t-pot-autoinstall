@@ -239,7 +239,7 @@ case $choice in
 	;;
 5)
 	echo "You chose to install T-Pot's Standard w/Sensor support. The future is now."
-	mode="TPOT-SENSOR"
+	mode="TPOT-SENSOR-SERVER"
 	;;
 
 *)
@@ -378,7 +378,7 @@ case $mode in
     echo "### Preparing TPOT flavor installation."
     cp /opt/tpot/etc/compose/tpot.yml $myTPOTCOMPOSE
   ;;
-  TPOT-SENSOR)
+  TPOT-SENSOR-SERVER)
     echo "### Preparing TPOT flavor installation."
     cp /opt/tpot/etc/compose/tpot-lumberjack.yml $myTPOTCOMPOSE
 	echo "### Generating Key/Cert pair for lumberjack encryption."
@@ -512,4 +512,10 @@ EOF
 
 # Final steps
 fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time or visit the dashboard on port 64297!"
+if [ $mode == "TPOT-SENSOR-SERVER"]
+then
+	fuECHO "### Remember to scp the lumberjack certificate and key file back for use on your sensor deployments "
+	fuECHO "### scp -P 64295 $myuser@IP:/opt/tpot/etc/certs/* . "
+fi
+
 mv /opt/tpot/host/etc/rc.local /etc/rc.local && sleep 2 && reboot
