@@ -406,16 +406,21 @@ case $mode in
 	openssl req -x509 -batch -nodes -newkey rsa:2048 -days 365 -keyout "/opt/tpot/etc/certs/lumberjack.key" -out "/opt/tpot/etc/certs/lumberjack.crt"
   ;;
   TPOT-SENSOR-CLIENT)
-    echo "### Preparing TPOT flavor installation."
+    echo "### Preparing TPOT Sensor flavor installation."
     cp /opt/tpot/etc/compose/tpot-sensor.yml $myTPOTCOMPOSE
 	echo -n "Enter server ip to log to: "
 	read CENTRAL_IP
 	echo "### Will send logs to $CENTRAL_IP"
 	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"
 	exit
+	echo "### Getting central server web user info to download certificat for log shipping."
+	echo -n "Enter web username for central server ip to log to: "
+	read webUsername
+	echo -n "Enter password for $webUsername: "
+	read -s webUserPassword
 	mkdir -p /opt/tpot/etc/certs
-	# wget --http-user=geoff --http-password=webpasswordtpot --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.
-	# mv ./lumberjack.crt /opt/tpot/etc/certs/
+	wget --http-user=$webUsername --http-password=$webUserpassword --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.
+	mv ./lumberjack.crt /opt/tpot/etc/certs/
   ;;
   ALL)
     echo "### Preparing EVERYTHING flavor installation."
