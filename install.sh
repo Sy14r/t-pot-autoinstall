@@ -383,7 +383,7 @@ case $mode in
     cp /opt/tpot/etc/compose/tpot-lumberjack.yml $myTPOTCOMPOSE
 	echo "### Generating Key/Cert pair for lumberjack encryption."
 	mkdir -p /opt/tpot/etc/certs
-	openssl req -x509 -batch -nodes -newkey rsa:2048 --days 365 -keyout "/opt/tpot/etc/certs/lumberjack.key" -out "/opt/tpot/etc/certs/lumberjack.crt"
+	openssl req -x509 -batch -nodes -newkey rsa:2048 -days 365 -keyout "/opt/tpot/etc/certs/lumberjack.key" -out "/opt/tpot/etc/certs/lumberjack.crt"
   ;;
   ALL)
     echo "### Preparing EVERYTHING flavor installation."
