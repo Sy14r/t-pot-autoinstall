@@ -337,7 +337,7 @@ fi
 pip install --upgrade pip
 fuECHO "### Installing docker-compose."
 pip install docker-compose==1.16.1 
-if [ ! $mode == "TPOT-SENSOR-CLIENT"]
+if [ ! $mode == "TPOT-SENSOR-CLIENT" ]
 then
 	fuECHO "### Installing elasticsearch curator."
 	pip install elasticsearch-curator==5.2.0
@@ -412,7 +412,6 @@ case $mode in
 	read CENTRAL_IP
 	echo "### Will send logs to $CENTRAL_IP"
 	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"
-	exit
 	echo "### Getting central server web user info to download certificat for log shipping."
 	echo -n "Enter web username for central server ip to log to: "
 	read webUsername
