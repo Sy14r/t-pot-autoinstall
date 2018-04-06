@@ -276,41 +276,44 @@ apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-compl
 apt-get autoclean -y
 apt-get autoremove -y
 
-# Let's remove NGINX default website
-fuECHO "### Removing NGINX default website."
-[ -e /etc/nginx/sites-enabled ] && rm /etc/nginx/sites-enabled/default  
-[ -e /etc/nginx/sites-avaliable ] && rm /etc/nginx/sites-available/default  
-[ -e /usr/share/nginx/html/index.html ] && rm /usr/share/nginx/html/index.html  
+if [ ! $mode == "TPOT-SENSOR-CLIENT"]
+then
+	# Let's remove NGINX default website
+	fuECHO "### Removing NGINX default website."
+	[ -e /etc/nginx/sites-enabled ] && rm /etc/nginx/sites-enabled/default  
+	[ -e /etc/nginx/sites-avaliable ] && rm /etc/nginx/sites-available/default  
+	[ -e /usr/share/nginx/html/index.html ] && rm /usr/share/nginx/html/index.html  
 
-if [ -z ${noninteractive+x} ]; then
-	# Let's ask user for a password for the web user
-	myOK="n"
-	myUSER=$myuser
-	fuECHO "### Please enter a password for your user $myuser for web access."
-	myPASS1="pass1"
-	myPASS2="pass2"
-	while [ "$myPASS1" != "$myPASS2"  ] 
-	  do
-		while [ "$myPASS1" == "pass1"  ] || [ "$myPASS1" == "" ]
-		  do
-			read -s -p "Password: " myPASS1
+	if [ -z ${noninteractive+x} ]; then
+		# Let's ask user for a password for the web user
+		myOK="n"
+		myUSER=$myuser
+		fuECHO "### Please enter a password for your user $myuser for web access."
+		myPASS1="pass1"
+		myPASS2="pass2"
+		while [ "$myPASS1" != "$myPASS2"  ] 
+		do
+			while [ "$myPASS1" == "pass1"  ] || [ "$myPASS1" == "" ]
+			do
+				read -s -p "Password: " myPASS1
+				fuECHO
+			done
+			read -s -p "Repeat password: " myPASS2
 			fuECHO
-		  done
-		read -s -p "Repeat password: " myPASS2
-		fuECHO
-		if [ "$myPASS1" != "$myPASS2" ];
-		  then
-			fuECHO "### Passwords do not match."
-			myPASS1="pass1"
-			myPASS2="pass2"
-		fi
-	  done
-else 
-	myUSER=$myusergiven
-	myPASS1=$mypasswordgiven
+			if [ "$myPASS1" != "$myPASS2" ];
+			then
+				fuECHO "### Passwords do not match."
+				myPASS1="pass1"
+				myPASS2="pass2"
+			fi
+		done
+	else 
+		myUSER=$myusergiven
+		myPASS1=$mypasswordgiven
+	fi
+	htpasswd -b -c /etc/nginx/nginxpasswd $myUSER $myPASS1 
+	fuECHO
 fi
-htpasswd -b -c /etc/nginx/nginxpasswd $myUSER $myPASS1 
-fuECHO
 
 # Let's modify the sources list
 sed -i '/cdrom/d' /etc/apt/sources.list
@@ -321,27 +324,33 @@ tee -a /etc/ssh/ssh_config  <<EOF
 UseRoaming no
 EOF
 
-# Let's generate a SSL certificate
-fuECHO "### Generating a self-signed-certificate for NGINX."
-fuECHO "### If you are unsure you can use the default values."
-mkdir -p /etc/nginx/ssl 
-openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/etc/nginx/ssl/nginx.key" -out "/etc/nginx/ssl/nginx.crt" -days 3650  -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd'
+if [ ! $mode == "TPOT-SENSOR-CLIENT"]
+then
+	# Let's generate a SSL certificate
+	fuECHO "### Generating a self-signed-certificate for NGINX."
+	fuECHO "### If you are unsure you can use the default values."
+	mkdir -p /etc/nginx/ssl 
+	openssl req -nodes -x509 -sha512 -newkey rsa:8192 -keyout "/etc/nginx/ssl/nginx.key" -out "/etc/nginx/ssl/nginx.crt" -days 3650  -subj '/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd'
+fi
 
 # Installing docker-compose, wetty, ctop, elasticdump, tpot
 pip install --upgrade pip
 fuECHO "### Installing docker-compose."
 pip install docker-compose==1.16.1 
-fuECHO "### Installing elasticsearch curator."
-pip install elasticsearch-curator==5.2.0
-fuECHO "### Installing wetty."
-[ ! -e /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node 
-npm install https://github.com/t3chn0m4g3/wetty -g 
-fuECHO "### Installing elasticsearch-dump."
-npm install https://github.com/t3chn0m4g3/elasticsearch-dump -g 
-fuECHO "### Installing ctop."
-wget https://github.com/bcicen/ctop/releases/download/v0.6.1/ctop-0.6.1-linux-amd64 -O ctop 
-mv ctop /usr/bin/
-chmod +x /usr/bin/ctop
+if [ ! $mode == "TPOT-SENSOR-CLIENT"]
+then
+	fuECHO "### Installing elasticsearch curator."
+	pip install elasticsearch-curator==5.2.0
+	fuECHO "### Installing wetty."
+	[ ! -e /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node 
+	npm install https://github.com/t3chn0m4g3/wetty -g 
+	fuECHO "### Installing elasticsearch-dump."
+	npm install https://github.com/t3chn0m4g3/elasticsearch-dump -g 
+	fuECHO "### Installing ctop."
+	wget https://github.com/bcicen/ctop/releases/download/v0.6.1/ctop-0.6.1-linux-amd64 -O ctop 
+	mv ctop /usr/bin/
+	chmod +x /usr/bin/ctop
+fi
 fuECHO "### Cloning T-Pot."
 git clone https://github.com/Sy14r/tpotce /opt/tpot
 
@@ -399,16 +408,14 @@ case $mode in
   TPOT-SENSOR-CLIENT)
     echo "### Preparing TPOT flavor installation."
     cp /opt/tpot/etc/compose/tpot-sensor.yml $myTPOTCOMPOSE
-	echo "### Checking for lumberjack cert."
 	echo -n "Enter server ip to log to: "
 	read CENTRAL_IP
 	echo "### Will send logs to $CENTRAL_IP"
 	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"
-	echo $myTPOTCOMPOSE
 	exit
 	mkdir -p /opt/tpot/etc/certs
-	# this is where we could prompt for server and then wget the cert and simplify installation
-	cp ./lumberjack.crt /opt/tpot/etc/certs/
+	# wget --http-user=geoff --http-password=webpasswordtpot --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.
+	# mv ./lumberjack.crt /opt/tpot/etc/certs/
   ;;
   ALL)
     echo "### Preparing EVERYTHING flavor installation."
@@ -502,6 +509,14 @@ sed -e 's:tsec:'$myuser':g' -i /usr/share/nginx/html/navbar.html
 
 # Let's enable T-Pot website
 ln -s /etc/nginx/sites-available/tpotweb.conf /etc/nginx/sites-enabled/tpotweb.conf 
+
+# Host the cert so that sensor's can grab it
+if [ $mode == "TPOT-SENSOR-SERVER" ]
+then
+	mkdir -p /var/www/html/certs
+	cp /opt/tpot/etc/certs/lumberjack.crt /var/www/html/certs/
+	chown -R www-data:www-data /var/www/html/certs/
+fi
 
 # Let's take care of some files and permissions
 chmod 760 -R /data 
