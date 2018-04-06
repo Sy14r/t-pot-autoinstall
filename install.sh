@@ -237,7 +237,7 @@ case $choice in
 	echo "You chose to install T-Pot's FULL INSTALLATION. Bring it on..."
 	mode="ALL"
 	;;
-4)
+5)
 	echo "You chose to install T-Pot's Standard w/Sensor support. The future is now."
 	mode="TPOT-SENSOR"
 	;;
