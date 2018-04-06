@@ -3,6 +3,8 @@
 # T-Pot 17.10 install script                             #
 # Ubuntu server 16.04.0x, x64                            #
 #                                                        #
+# v1.3 by Sy14r, Armor 2018-04-05                        #
+#                                                        #
 # v1.2 by av, DTAG 2017-11-13                            #
 #                                                        #
 # based on T-Pot 17.10 Community Edition Script          #
@@ -68,6 +70,10 @@ if [ "$#" -ne 3 -a  "$#" -gt 0 ]; then
 	echo "#                                                        #"
 	echo "# 4 - T-Pot's FULL INSTALLATION                          #"
 	echo "#     Everything                                         #"
+	echo "#                                                        #"
+	echo "# 5 - T-Pot's STANDARD W/LUMBERJACK                      #"
+	echo "#     Standard Honeypots, Suricata & ELK, and support    #"
+	echo "#     for remote sensors                                 #"
 	echo "#                                                        #"
 	echo "##########################################################"
 	echo ""
@@ -177,7 +183,7 @@ clear
 
 
 if [ -z ${noninteractive+x} ]; then
-	echo "##########################################################"
+   echo "##########################################################"
 	echo "#                                                        #"
 	echo "#     How do you want to proceed? Enter your choice.     #"
 	echo "#                                                        #"
@@ -196,6 +202,10 @@ if [ -z ${noninteractive+x} ]; then
 	echo "# 4 - T-Pot's FULL INSTALLATION                          #"
 	echo "#     Everything                                         #"
 	echo "#                                                        #"
+	echo "# 5 - T-Pot's STANDARD W/LUMBERJACK                      #"
+	echo "#     Standard Honeypots, Suricata & ELK, and support    #"
+	echo "#     for remote sensors                                 #"
+	echo "#                                                        #"
 	echo "##########################################################"
 	echo ""
 	echo -n "Your choice: "
@@ -205,9 +215,9 @@ else
 fi
 
 
-if [[ "$choice" != [1-4] ]];
+if [[ "$choice" != [1-5] ]];
 	then
-		fuECHO "### You typed $choice, which I don't recognize. It's either '1', '2', '3' or '4'. Script will abort!"
+		fuECHO "### You typed $choice, which I don't recognize. It's either '1', '2', '3', '4' or '5'. Script will abort!"
 		exit 1
 fi
 case $choice in
@@ -226,6 +236,10 @@ case $choice in
 4)
 	echo "You chose to install T-Pot's FULL INSTALLATION. Bring it on..."
 	mode="ALL"
+	;;
+4)
+	echo "You chose to install T-Pot's Standard w/Sensor support. The future is now."
+	mode="TPOT-SENSOR"
 	;;
 
 *)
@@ -318,7 +332,7 @@ wget https://github.com/bcicen/ctop/releases/download/v0.6.1/ctop-0.6.1-linux-am
 mv ctop /usr/bin/
 chmod +x /usr/bin/ctop
 fuECHO "### Cloning T-Pot."
-git clone https://github.com/dtag-dev-sec/tpotce /opt/tpot
+git clone https://github.com/Sy14r/tpotce /opt/tpot
 
 # Let's add a new user
 fuECHO "### Adding new user."
@@ -363,6 +377,12 @@ case $mode in
   TPOT)
     echo "### Preparing TPOT flavor installation."
     cp /opt/tpot/etc/compose/tpot.yml $myTPOTCOMPOSE
+  ;;
+  TPOT-SENSOR)
+    echo "### Preparing TPOT flavor installation."
+    cp /opt/tpot/etc/compose/tpot-lumberjack.yml $myTPOTCOMPOSE
+	echo "### Generating Key/Cert pair for lumberjack encryption."
+	openssl req -x509 -batch -nodes -newkey rsa:2048 --days 365 -keyout /opt/tpot/etc/lumberjack.key -out /opt/tpot/etc/lumberjack.crt
   ;;
   ALL)
     echo "### Preparing EVERYTHING flavor installation."
