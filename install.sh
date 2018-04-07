@@ -418,7 +418,7 @@ case $mode in
 	echo -n "Enter password for $webUsername: "
 	read -s webUserPassword
 	mkdir -p /opt/tpot/etc/certs
-	wget --http-user=$webUsername --http-password=$webUserpassword --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.
+	wget --http-user=$webUsername --http-password=$webUserpassword --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.crt
 	mv ./lumberjack.crt /opt/tpot/etc/certs/
   ;;
   ALL)
