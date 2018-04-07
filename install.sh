@@ -324,7 +324,7 @@ tee -a /etc/ssh/ssh_config  <<EOF
 UseRoaming no
 EOF
 
-if [ ! $mode == "TPOT-SENSOR-CLIENT"]
+if [ "$mode" != "TPOT-SENSOR-CLIENT" ]
 then
 	# Let's generate a SSL certificate
 	fuECHO "### Generating a self-signed-certificate for NGINX."
@@ -337,7 +337,7 @@ fi
 pip install --upgrade pip
 fuECHO "### Installing docker-compose."
 pip install docker-compose==1.16.1 
-if [ ! $mode == "TPOT-SENSOR-CLIENT" ]
+if [ "$mode" != "TPOT-SENSOR-CLIENT" ]
 then
 	fuECHO "### Installing elasticsearch curator."
 	pip install elasticsearch-curator==5.2.0
@@ -515,7 +515,7 @@ sed -e 's:tsec:'$myuser':g' -i /usr/share/nginx/html/navbar.html
 ln -s /etc/nginx/sites-available/tpotweb.conf /etc/nginx/sites-enabled/tpotweb.conf 
 
 # Host the cert so that sensor's can grab it
-if [ $mode == "TPOT-SENSOR-SERVER" ]
+if [ "$mode" == "TPOT-SENSOR-SERVER" ]
 then
 	mkdir -p /var/www/html/certs
 	cp /opt/tpot/etc/certs/lumberjack.crt /var/www/html/certs/
@@ -556,10 +556,4 @@ EOF
 
 # Final steps
 fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time or visit the dashboard on port 64297!"
-if [ $mode == "TPOT-SENSOR-SERVER"]
-then
-	fuECHO "### Remember to scp the lumberjack certificate and key file back for use on your sensor deployments "
-	fuECHO "### scp -P 64295 $myuser@IP:/opt/tpot/etc/certs/* . "
-fi
-
 mv /opt/tpot/host/etc/rc.local /etc/rc.local && sleep 2 && reboot
