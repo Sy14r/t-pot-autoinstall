@@ -276,7 +276,7 @@ apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-compl
 apt-get autoclean -y
 apt-get autoremove -y
 
-if [ ! $mode == "TPOT-SENSOR-CLIENT"]
+if [ "$mode" != "TPOT-SENSOR-CLIENT"]
 then
 	# Let's remove NGINX default website
 	fuECHO "### Removing NGINX default website."
