@@ -414,11 +414,11 @@ case $mode in
 	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"
 	echo "### Getting central server web user info to download certificat for log shipping."
 	echo -n "Enter web username for central server ip to log to: "
-	read webUsername
+	read webUserName
 	echo -n "Enter password for $webUsername: "
 	read -s webUserPassword
 	mkdir -p /opt/tpot/etc/certs
-	wget --http-user=$webUsername --http-password=$webUserpassword --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.crt
+	wget --http-user=$webUserName --http-password=$webUserPassword --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.crt
 	mv ./lumberjack.crt /opt/tpot/etc/certs/
   ;;
   ALL)
