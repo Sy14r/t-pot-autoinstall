@@ -415,7 +415,7 @@ case $mode in
 	echo "### Getting central server web user info to download certificat for log shipping."
 	echo -n "Enter web username for central server ip to log to: "
 	read webUserName
-	echo -n "Enter password for $webUsername: "
+	echo -n "Enter password for $webUserName: "
 	read -s webUserPassword
 	mkdir -p /opt/tpot/etc/certs
 	wget --http-user=$webUserName --http-password=$webUserPassword --no-check-certificate https://159.89.228.203:64297/certs/lumberjack.crt
