@@ -46,10 +46,14 @@ Make sure the key-based SSH login for your normal user is working!
 "
 
 # ADD ARGS for automated setup
-if [ "$#" -ne 3 -a  "$#" -gt 0 ]; then    
-	echo "## Please add the following three arguments for a one shot install:"
+if [ "$#" -ge 3 -a  "$#" -gt 0 ]; then    
+	echo "## Please add the following three (or six) arguments for a one shot install:"
     echo "         Username, which edition to install (number), a webpassword"
-    echo "## invoke: $0 myusername <1|2|3|4> myWebPassw0rd"
+	echo "   For setting up a remote sensor shipping to central server:"
+	echo "         Username, which edition to install (number), a webpassword, central server ip, logging user, logging password"
+    echo "## invoke: $0 myusername <1|2|3|4|5> myWebPassw0rd"
+	echo "##                     or"
+	echo "## invoke: $0 myusername 6 myWebPassw0rd centralServerIP centralServerUsername centralServerPassword"
     echo ""
     echo "## Editions to choose from: "
     echo "##########################################################"
@@ -85,14 +89,24 @@ if [ "$#" -ne 3 -a  "$#" -gt 0 ]; then
     exit 1
 fi
 
-if [ "$#" -eq 3 ]; then
+if [ "$#" -ge 3 ]; then
         myusergiven=$1
         myeditiongiven=$2
         mypasswordgiven=$3
+		if [ "$#" -ge 4 ]; then
+			loggingservergiven=$4
+			webusergiven=$5
+			webpasswordgiven=$6
+		fi
         echo "## Installing non interactive using"
         echo "## User: $myusergiven"
         echo "## Edition: $myeditiongiven"
         echo "## Webpassword: $mypasswordgiven"
+		if [ "$#" -ge 4 ]; then
+			echo "## Central Server: $loggingservergiven"
+        	echo "## Central User: $webusergiven"
+        	echo "## Central Password: $webpasswordgiven"
+		fi
         echo "## Let's see if that works..." 
         noninteractive=1
 fi
@@ -407,15 +421,21 @@ case $mode in
   TPOT-SENSOR-CLIENT)
     echo "### Preparing TPOT Sensor flavor installation."
     cp /opt/tpot/etc/compose/tpot-sensor.yml $myTPOTCOMPOSE
-	echo -n "Enter server ip to log to: "
-	read CENTRAL_IP
-	echo "### Will send logs to $CENTRAL_IP"
-	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"
-	echo "### Getting central server web user info to download certificat for log shipping."
-	echo -n "Enter web username for central server ip to log to: "
-	read webUserName
-	echo -n "Enter password for $webUserName: "
-	read -s webUserPassword
+	if [ -z ${noninteractive+x} ]; then
+		echo -n "Enter server ip to log to: "
+		read CENTRAL_IP
+		echo "### Will send logs to $CENTRAL_IP"
+		echo "### Getting central server web user info to download certificat for log shipping."
+		echo -n "Enter web username for central server ip to log to: "
+		read webUserName
+		echo -n "Enter password for $webUserName: "
+		read -s webUserPassword
+	else 
+		CENTRAL_IP=$loggingservergiven
+		webUserName=$webusergiven
+		webUserPassword=$webpasswordgiven
+	fi
+	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"	
 	mkdir -p /opt/tpot/etc/certs
 	wget --http-user=$webUserName --http-password=$webUserPassword --no-check-certificate https://$CENTRAL_IP:64297/certs/lumberjack.crt
 	mv ./lumberjack.crt /opt/tpot/etc/certs/
