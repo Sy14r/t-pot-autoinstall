@@ -590,7 +590,7 @@ EOF
 # Final steps
 fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time or visit the dashboard on port 64297!"
 mv /opt/tpot/host/etc/rc.local /etc/rc.local
-if [ $noReboot -eq 0]; then
+if [ $noReboot -eq 0 ]; then
 	sleep 2 && reboot
 fi
 exit 0
