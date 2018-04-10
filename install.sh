@@ -593,3 +593,4 @@ mv /opt/tpot/host/etc/rc.local /etc/rc.local
 if [ $noReboot -eq 0]; then
 	sleep 2 && reboot
 fi
+exit 0
