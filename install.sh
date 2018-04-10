@@ -120,6 +120,7 @@ if [ "$#" -ge 3 ]; then
         	echo "## Central User: $webusergiven"
         	echo "## Central Password: $webpasswordgiven"
 		fi
+		echo "## Reboot: $noReboot"
         echo "## Let's see if that works..." 
         noninteractive=1
 fi
