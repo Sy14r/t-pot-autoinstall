@@ -46,8 +46,9 @@ Make sure the key-based SSH login for your normal user is working!
 "
 
 # ADD ARGS for automated setup
-if [ $# -ne 0 -a $# -ne 3 -a  $# -ne 6 ]; then    
-	echo "## Please add the following three (or six) arguments for a one shot install:"
+if [ $# -ne 0 -a $# -ne 3 -a  $# -ne 4 -a $# -ne 6 -a $# -ne 7 ]; then    
+	echo "## Please add the following three (or six) arguments for a one shot install :"
+	echo "## You may also add an optional fourth or seventh argument to indicate that you will manually reboot at the end :"
     echo "         Username, which edition to install (number), a webpassword"
 	echo "   For setting up a remote sensor shipping to central server:"
 	echo "         Username, which edition to install (number), a webpassword, central server ip, logging user, logging password"
@@ -90,13 +91,25 @@ if [ $# -ne 0 -a $# -ne 3 -a  $# -ne 6 ]; then
 fi
 
 if [ "$#" -ge 3 ]; then
+		noReboot=0
         myusergiven=$1
         myeditiongiven=$2
         mypasswordgiven=$3
 		if [ "$#" -ge 4 ]; then
-			loggingservergiven=$4
-			webusergiven=$5
-			webpasswordgiven=$6
+			if [ "$#" -eq 4 ]; then
+				noReboot=1
+			else
+			    if [ "$#" -eq 6 ]; then
+					loggingservergiven=$4
+					webusergiven=$5
+					webpasswordgiven=$6
+				else
+					loggingservergiven=$4
+					webusergiven=$5
+					webpasswordgiven=$6
+					noReboot=1
+				fi
+			fi
 		fi
         echo "## Installing non interactive using"
         echo "## User: $myusergiven"
@@ -575,4 +588,7 @@ EOF
 
 # Final steps
 fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time or visit the dashboard on port 64297!"
-mv /opt/tpot/host/etc/rc.local /etc/rc.local && sleep 2 && reboot
+mv /opt/tpot/host/etc/rc.local /etc/rc.local
+if [ $noReboot -eq 0]; then
+	sleep 2 && reboot
+fi
