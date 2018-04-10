@@ -46,7 +46,7 @@ Make sure the key-based SSH login for your normal user is working!
 "
 
 # ADD ARGS for automated setup
-if [ $# -eq 3 -o  $# -eq 6 ]; then    
+if [ $# -ne 0 -o $# -ne 3 -o  $# -ne 6 ]; then    
 	echo "## Please add the following three (or six) arguments for a one shot install:"
     echo "         Username, which edition to install (number), a webpassword"
 	echo "   For setting up a remote sensor shipping to central server:"
