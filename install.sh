@@ -207,7 +207,6 @@ exec > >(tee "install.log")
 
 echo "Everything looks OK..."
 echo ""
-clear
 
 
 if [ -z ${noninteractive+x} ]; then
