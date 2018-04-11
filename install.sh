@@ -14,11 +14,7 @@
 
 # Let's create a function for colorful output
 fuECHO () {
-local myRED=1
-local myWHT=7
-tput setaf $myRED
 echo $1 "$2"
-tput setaf $myWHT
 }
 
 # Some global vars
