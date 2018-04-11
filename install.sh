@@ -288,17 +288,17 @@ esac
 
 # Let's pull some updates
 fuECHO "### Pulling Updates."
-apt-get update -y
+apt-get update -yq
 fuECHO "### Installing Updates."
-apt-get upgrade -y
+apt-get upgrade -yq
 
 # Install packages needed
 
 apt-get install apache2-utils apparmor apt-transport-https aufs-tools bash-completion build-essential ca-certificates cgroupfs-mount curl dialog dnsutils docker.io dstat ethtool genisoimage git glances html2text htop iptables iw jq libcrack2 libltdl7 lm-sensors man nginx-extras nodejs npm ntp openssh-server openssl prips syslinux psmisc pv python-pip unzip vim -yq 
 
 # Let's clean up apt
-apt-get autoclean -y
-apt-get autoremove -y
+apt-get autoclean -yq
+apt-get autoremove -yq
 
 if [ "$mode" != "TPOT-SENSOR-CLIENT" ]; then
 	# Let's remove NGINX default website
