@@ -182,7 +182,6 @@ exec > >(tee "install.log")
 
 echo "Everything looks OK..."
 echo ""
-clear
 
 choice=$myeditiongiven
 
