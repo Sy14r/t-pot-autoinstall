@@ -283,7 +283,7 @@ fuECHO "### Adding new user."
 addgroup --gid 2000 tpot
 adduser --system --no-create-home --uid 2000 --disabled-password --disabled-login --gid 2000 tpot
 
-
+myHOST=$sensorNameGiven
 fuECHO "### Let's set the hostname: $myHOST"
 hostnamectl set-hostname $myHOST 
 sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts 
