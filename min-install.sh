@@ -287,13 +287,20 @@ adduser --system --no-create-home --uid 2000 --disabled-password --disabled-logi
 # Let's set the hostname
 
 myHOST=$sensorNameGiven
+if [ "$myHost" == "" ]
+then
+    myHost="CENTRAL-SERVER"
+fi
 hostnamectl set-hostname $myHOST 
 sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts 
 
 
 # Let's patch sshd_config
 fuECHO "### Patching sshd_config to listen on port 64295 and deny password authentication."
-sed -i 's#Port 22#Port 64295#' /etc/ssh/sshd_config
+if [ "$mode" == "TPOT-SENSOR-CLIENT" ]
+then
+	sed -i 's#Port 22#Port 64295#' /etc/ssh/sshd_config
+fi
 sed -i 's#\#PasswordAuthentication yes#PasswordAuthentication no#' /etc/ssh/sshd_config
 
 # Let's allow ssh password authentication from RFC1918 networks
@@ -394,6 +401,13 @@ mkdir -p /data/conpot/log \
          /data/p0f/log \
          /data/vnclowpot/log
 touch /data/spiderfoot/spiderfoot.db 
+
+# Change nginx if we're the central logging server...
+if [ "$mode" == "TPOT-CENTRAL-LOGGING" ]
+then
+    sed -i /opt/tpot/host/etc/nginx/nginx.conf -e 's/64297/443/g'
+fi
+
 
 # Let's copy some files
 tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C / 
