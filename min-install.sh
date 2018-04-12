@@ -404,14 +404,14 @@ tar xvfz /opt/tpot/etc/objects/elkbase.tgz -C /
 cp    /opt/tpot/host/etc/systemd/* /etc/systemd/system/ 
 cp    /opt/tpot/host/etc/issue /etc/ 
 cp -R /opt/tpot/host/etc/nginx/ssl /etc/nginx/ 
-cp    /opt/tpot/host/etc/nginx/tpotweb.conf /etc/nginx/sites-available/
 
-# Change nginx if we're the central logging server...
+# Change tpotwebconf  if we're the central logging server...
 if [ "$mode" == "TPOT-CENTRAL-LOGGING" ]
 then
-    sed -i /opt/tpot/host/etc/nginx/nginx.conf -e 's/64297/443/g'
+    sed -i /opt/tpot/host/etc/nginx/tpotweb.conf -e 's/64297/443/g'
 fi
 
+cp    /opt/tpot/host/etc/nginx/tpotweb.conf /etc/nginx/sites-available/
 cp    /opt/tpot/host/etc/nginx/nginx.conf /etc/nginx/nginx.conf 
 cp    /opt/tpot/host/usr/share/nginx/html/* /usr/share/nginx/html/ 
 systemctl enable tpot 
