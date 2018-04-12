@@ -63,6 +63,7 @@ if [ $# -ne 3 -a  $# -ne 4 -a $# -ne 7 -a $# -ne 8 ]; then
     echo "## EXITING"
     exit 1
 fi
+sensorNameGiven="CENTRAL-SERVER"
 
 if [ "$#" -ge 3 ]; then
 		noReboot=0
@@ -284,12 +285,6 @@ adduser --system --no-create-home --uid 2000 --disabled-password --disabled-logi
 
 
 # Let's set the hostname
-
-myHOST=$sensorNameGiven
-if [ "$myHost" == "" ]
-then
-    myHost="CENTRAL-SERVER"
-fi
 hostnamectl set-hostname $myHOST 
 sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts 
 
