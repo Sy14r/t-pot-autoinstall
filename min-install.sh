@@ -291,10 +291,7 @@ sed -i 's#127.0.1.1.*#127.0.1.1\t'"$myHOST"'#g' /etc/hosts
 
 # Let's patch sshd_config
 fuECHO "### Patching sshd_config to listen on port 64295 and deny password authentication."
-if [ "$mode" == "TPOT-SENSOR-CLIENT" ]
-then
-	sed -i 's#Port 22#Port 64295#' /etc/ssh/sshd_config
-fi
+sed -i 's#Port 22#Port 64295#' /etc/ssh/sshd_config
 sed -i 's#\#PasswordAuthentication yes#PasswordAuthentication no#' /etc/ssh/sshd_config
 
 # Let's allow ssh password authentication from RFC1918 networks
@@ -470,7 +467,7 @@ EOF
 # Final steps
 if [ "$mode" == "TPOT-CENTRAL-LOGGING" ]
 then
-	fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 22 next time or visit the dashboard on port 443!"
+	fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time or visit the dashboard on port 443!"
 else
 	fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time!"
 fi
