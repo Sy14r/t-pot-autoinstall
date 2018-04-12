@@ -465,7 +465,12 @@ EOF
 
 
 # Final steps
-fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time or visit the dashboard on port 64297!"
+if [ "$mode" == "TPOT-CENTRAL-LOGGING" ]
+then
+	fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 22 next time or visit the dashboard on port 443!"
+else
+	fuECHO "### Thanks for your patience. Now rebooting. Remember to login on SSH port 64295 next time!"
+fi
 mv /opt/tpot/host/etc/rc.local /etc/rc.local
 if [ $noReboot -eq 0 ]; then
 	sleep 2 && reboot
