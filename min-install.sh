@@ -325,7 +325,7 @@ case $mode in
 	webUserPassword=$webpasswordgiven
 	sed -i $myTPOTCOMPOSE -e "s/SERVER_IP=\"127.0.0.1\"/SERVER_IP=\"$CENTRAL_IP\"/g"	
 	mkdir -p /opt/tpot/etc/certs
-	wget --http-user=$webUserName --http-password=$webUserPassword --no-check-certificate https://$CENTRAL_IP:64297/certs/lumberjack.crt
+	wget --http-user=$webUserName --http-password=$webUserPassword --no-check-certificate https://$CENTRAL_IP/certs/lumberjack.crt
 	mv ./lumberjack.crt /opt/tpot/etc/certs/
   ;;
 esac
