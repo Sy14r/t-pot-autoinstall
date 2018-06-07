@@ -260,7 +260,7 @@ fi
 # Installing docker-compose, wetty, ctop, elasticdump, tpot
 pip install --upgrade pip
 fuECHO "### Installing docker-compose."
-pip install docker-compose==1.16.1 
+pip install docker-compose
 if [ "$mode" == "TPOT-CENTRAL-LOGGING" ]
 then
 	fuECHO "### Installing elasticsearch curator."
