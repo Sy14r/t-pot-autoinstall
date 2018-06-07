@@ -264,7 +264,7 @@ python -m pip install docker-compose
 if [ "$mode" == "TPOT-CENTRAL-LOGGING" ]
 then
 	fuECHO "### Installing elasticsearch curator."
-	pip install elasticsearch-curator==5.2.0
+	python -m pip install elasticsearch-curator==5.2.0
 	fuECHO "### Installing wetty."
 	[ ! -e /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node 
 	npm install https://github.com/t3chn0m4g3/wetty -g 
